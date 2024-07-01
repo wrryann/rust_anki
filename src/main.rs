@@ -25,20 +25,20 @@ enum CardDificulty {
     Hard,
 }
 
-// impl MainCommands {
-//     fn keyword_match<T>(self, x: LocalizationCommands){
-//         match self {
-//             Self::Add => x.match_location(),
-//             Self::Study => x.match_location(),
-//         };
-//     }
-// }
+impl MainCommands {
+    fn keyword_match(self, x: LocalizationCommands, s: String){
+        match self {
+            Self::Add => x.match_location(s),
+            Self::Study => x.match_location(s),
+        };
+    }
+}
 
 impl LocalizationCommands {
-    fn match_location(self, ){
+    fn match_location(self, s){
         match self {
             Self::Card => Add(),
-            Self::Folder => println!("saaaaaa")
+            Self::Folder => println!("chegou até folder do localization nome: {s}")
         }
     }
 }
@@ -46,6 +46,7 @@ impl LocalizationCommands {
 struct CommandPatern {
     main_command: MainCommands,
     localization_command: Option<LocalizationCommands>,
+    name: Option<String>
     
 }
 
@@ -62,29 +63,28 @@ struct CardStatistics {
 }
 
 fn user_input_select(input: String) {
-    let mut keywords_matched: Vec<Commands> = Vec::new();
-    let user_keywords = input.trim().split(" ").into_iter().for_each( |x| {
-       match x {
-            "ADD" => keywords_matched.push(Commands::MainC(MainCommands::Add)),
-            "STUDY" => keywords_matched.push(Commands::MainC(MainCommands::Study)),
-            "FOLDER" => keywords_matched.push(Commands::LocalizationC(LocalizationCommands::Folder)),
-            "CARD" => keywords_matched.push(Commands::LocalizationC(LocalizationCommands::Card)),
-            _ => println!("error")
+    let user_keywords: Vec<&str> = input.trim().split(" ").into_iter().collect();
 
-        }  
-    });
+    // let a = CommandPatern {  };
 
-    println!("{:?}", keywords_matched);
+    println!("input do usuario: {:?}", user_keywords);
 
-    
+    // match user_keywords[0] {
+    //     "ADD" => CommandPatern{  },
+    //     "STUDY" => MainCommands::Study.keyword_match(foo(user_keywords[1])),
+    //     _ => println!("error")
+    // }
 }
 
-// fn foo(){
-//     match keywords_matched[0] {
-//         Commands::MainC(MainCommands::Add) => return MainCommands::Add.keyword_match(if matches!(keywords_matched[1], LocalizationCommands)  { keywords_matched[1] }),
-//         _ => MainCommands::Study.keyword_match(LocalizationCommands::Card)
-//     }
-// }
+fn foo<T>(x: &str) -> Commands {
+    match x {
+            "ADD" => Commands::MainC(MainCommands::Add),
+            "STUDY" => Commands::MainC(MainCommands::Study),
+            "FOLDER" => Commands::LocalizationC(LocalizationCommands::Folder),
+            "CARD" => Commands::LocalizationC(LocalizationCommands::Card),
+            _ => return Commands::LocalizationC(LocalizationCommands::Card)
+    }
+}
 
 fn ask_input() -> String {
     let mut user_input = String::new();
