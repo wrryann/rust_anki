@@ -76,7 +76,7 @@ fn user_input_select(input: String) {
     // }
 }
 
-fn foo<T>(x: &str) -> Commands {
+fn foo(x: &str) -> Commands {
     match x {
             "ADD" => Commands::MainC(MainCommands::Add),
             "STUDY" => Commands::MainC(MainCommands::Study),
