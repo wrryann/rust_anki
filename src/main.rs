@@ -1,4 +1,4 @@
-use std::io;
+use std::{collections::HashMap, io};
 
 #[derive(Debug)]
 enum Commands {
@@ -25,54 +25,57 @@ enum CardDificulty {
     Hard,
 }
 
-// impl MainCommands {
-//     fn keyword_match(self, x: LocalizationCommands, s: String){
-//         match self {
-//             Self::Add => x.match_location(s),
-//             Self::Study => x.match_location(s),
-//         };
-//     }
-// }
+#[derive(Debug)]
+enum Add {
+    Folder(Folder),
+    Card(Card)
+}
 
-// impl LocalizationCommands {
-//     fn match_location(self){
-//         match self {
-//             Self::Card => Add(),
-//             Self::Folder => println!("chegou até folder do localization")
-//         }
-//     }
-// }
 
 #[derive(Debug)]
 struct CommandPatern {
     main_command: MainCommands,
     localization_command: Option<LocalizationCommands>,
-    name: Option<String>
+    name: Option<String>,
+    back: Option<String>
     
 }
 
+#[derive(Debug)]
+struct Folder {
+    name: String,
+    cards: Option<Vec<Card>>,
+    size: Option<isize> 
+}
+
+#[derive(Debug)]
 struct Card {
     front: String,
     back: String,
-    statistics: CardStatistics,
+    // statistics: CardStatistics,
 }
 
-struct CardStatistics {
-    dificulty: CardDificulty,
-    available: bool,
-    time: i32,
-}
 
-fn user_input_select(input: String) {
+
+// struct CardStatistics {
+//     dificulty: CardDificulty,
+//     available: bool,
+//     time: i32,
+// }
+
+
+fn user_input_select(input: String) -> HashMap<String, Add> {
     let user_keywords: Vec<&str> = input.trim().split(" ").into_iter().collect();
 
     let user_command = CommandPatern {
             main_command: match_main_c(user_keywords[0]), 
             localization_command: Some(match_location_c(user_keywords[1])), 
-            name: Some(match_name(Some(user_keywords[2])))
+            name: Some(match_name(Some(user_keywords[2]))),
+            back: Some(user_keywords[3].to_string()),
+
     };
 
-    println!("c.pa: {:?}", user_command);
+    add(user_command)
     
 }
 
@@ -95,7 +98,7 @@ fn match_location_c(x: &str) -> LocalizationCommands {
 
 fn match_name(x: Option<&str>) -> String {
     if let Some(i) = x {
-        return String::from(i);
+        return String::from(i).to_lowercase();
     } else {
         String::from("new folder")
     }
@@ -105,20 +108,36 @@ fn ask_input() -> String {
     let mut user_input = String::new();
         io::stdin().read_line(&mut user_input).
             expect("sla");
-
+// 
     user_input.to_uppercase()
 }
 
-fn Add(command: CommandPatern){
-    
+fn add(command_user: CommandPatern) -> HashMap<String, Add> {
+    let mut hash_map = HashMap::new();
+
+    match command_user.localization_command.unwrap() {
+        LocalizationCommands::Folder => hash_map.insert(
+            command_user.name.clone().unwrap(),
+            Add::Folder(Folder { name: command_user.name.unwrap(), cards: None, size: None })),
+        LocalizationCommands::Card => hash_map.insert(
+            command_user.name.clone().unwrap(),
+            Add::Card(Card { front: command_user.name.unwrap(), back: command_user.back.unwrap() })),
+    };
+
+    hash_map
+
 
 }
 
 
 
 fn main() {
-    // println!("{:?}", user_input_select(ask_input()));
+    // let mut map = HashMap::new();
     // add card "name"
-    println!("{:?}", user_input_select(ask_input()) );
+    // println!("{:?}", user_input_select(ask_input()) );
 
+    let mut hash_map = HashMap::new();
+    hash_map.insert(1, user_input_select(ask_input()));
+
+    println!("{:?}", hash_map)
 }
