@@ -65,18 +65,21 @@ struct Card {
 
 
 fn user_input_select(input: String) -> HashMap<String, Add> {
-    let user_keywords: Vec<&str> = input.trim().split(" ").into_iter().collect();
+    let user_keywords: Vec<&str> = input.trim().split_whitespace().collect();
+
+    if user_keywords.len() < 4 {
+        println!("Please enter at least 4 words: <ADD|STUDY> <FOLDER|CARD> <name> <back>");
+        return HashMap::new();
+    }
 
     let user_command = CommandPatern {
-            main_command: match_main_c(user_keywords[0]), 
-            localization_command: Some(match_location_c(user_keywords[1])), 
-            name: Some(match_name(Some(user_keywords[2]))),
-            back: Some(user_keywords[3].to_string()),
-
+        main_command: match_main_c(user_keywords[0]),
+        localization_command: Some(match_location_c(user_keywords[1])),
+        name: Some(match_name(Some(user_keywords[2]))),
+        back: Some(user_keywords[3].to_string()),
     };
 
     add(user_command)
-    
 }
 
 fn match_main_c(x: &str) -> MainCommands {
@@ -132,12 +135,7 @@ fn add(command_user: CommandPatern) -> HashMap<String, Add> {
 
 
 fn main() {
-    // let mut map = HashMap::new();
-    // add card "name"
-    // println!("{:?}", user_input_select(ask_input()) );
-
-    let mut hash_map = HashMap::new();
-    hash_map.insert(1, user_input_select(ask_input()));
-
-    println!("{:?}", hash_map)
+    println!("Enter command: <ADD|STUDY> <FOLDER|CARD> <name> <back>");
+    let hash_map = user_input_select(ask_input());
+    println!("{:?}", hash_map);
 }
